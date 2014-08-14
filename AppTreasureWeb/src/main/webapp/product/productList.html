@@ -1,0 +1,260 @@
+<div id="wrap" class="content-main">
+    <form id="getProductListForm" class="form-box">
+        <div class="item mb20 clearfix">
+            <div class="item fl clearfix">
+                <div class="item-name fl">
+                    <label for="productName">商品名称：</label>
+                </div>
+                <div class="item-ipt fl">
+                    <input type="text" name="productName" id="productName" data-choosable-flag="true">
+                </div>
+            </div>
+            <div class="button-box fl ml170">
+                <button type="button" id="productSearchBtn">查&nbsp;询</button>
+            </div>
+        </div>
+    </form>
+    <div id="table-box">
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="100px">商品ID</th>
+                        <th>商品名称</th>
+                        <th width="100px">剩余数量</th>
+                        <th width="100px">价值</th>
+                        <th width="100px">兑换点数</th>
+                        <th width="100px">预约数量</th>
+                        <th width="120px">操作选项</th>
+                    </tr>
+                </thead>
+                <tbody id="productList">
+                </tbody>
+            </table>
+        </div>
+        <div id="product-list-page"></div>
+        <div id="no-data-tip"></div>
+    </div>
+</div>
+
+<script id="productListTemplate" type="text/html">
+    <% if(productList.length > 0){ %>
+    <% for(i=0;i < productList.length;i++){ %>
+    <tr>
+    <td><%=productList[i].productId%></td>
+    <td><%=productList[i].productName%></td>
+    <td><%=productList[i].productNum%></td>
+    <td><%=productList[i].price%></td>
+    <td><%=productList[i].integration%></td>
+    <td><%=productList[i].totalQualificationCount%></td>
+    <td class="optlist" data-questionid=<%=productList[i].productId%>>
+    <button class="edit" data-tip="修改商品">修改</button>
+    </td>
+    </tr>
+    <% }%>
+    <% } %>
+</script>
+
+<script id="productPageTemplate" type="text/html">
+ <% if(totalPage >0){%>
+        <ul classs="table-page">
+            <li class="js_start"><a href="javascript:;">首页</a></li>
+            <li class="js_up"><a href="javascript:;">上页</a></li>
+             <li class="js_down"><a href="javascript:;">下页</a></li>
+             <li class="js_end"><a href="javascript:;">尾页</a></li>
+            <li><%=totalPage%>|<%=count %></li>
+         </ul>
+        
+  <% }%>
+</script>
+
+<script>
+    var currentPage = 1;
+    var totalPage;
+    $('#productSearchBtn').click(function() {
+        var productName = $('#productName').val();
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, /*"productName": productName,*/ "pageNo": 1},
+            encryptType: 1})
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=inquirePageProductList', // 跳转到 action    
+            data: {
+                request: data
+            },
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    var oData = oData.data;
+                    totalPage = oData.totalPage;
+                    var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                    if (oData.count > 0) {
+                        $('#no-data-tip').hide();
+                        var html = template.render('productListTemplate', oData);
+                        $('#productList').html(html);
+                        var page = template.render('productPageTemplate', pagePara);
+                        $('#product-list-page').html(page);
+                    }
+                } else {
+                    $('#productList').html("");
+                    $('#no-data-tip').show();
+                }
+            },
+            error: function() {
+                alert("异常！");
+            }
+        });
+
+
+    });
+    $('#product-list-page').on('click', '.js_start', function() {
+        var productName = $('#productName').val();
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, /*"productName": productName,*/ "pageNo": 1},
+            encryptType: 1})
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=inquirePageProductList', // 跳转到 action    
+            data: {
+                request: data
+            },
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    var oData = oData.data;
+                    var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                    totalPage = oData.totalPage;
+                    currentPage = 1;
+
+                    if (oData.count > 0) {
+                        $('#no-data-tip').hide();
+                        var html = template.render('productListTemplate', oData);
+                        $('#productList').html(html);
+                        var page = template.render('productPageTemplate', pagePara);
+                        $('#product-list-page').html(page);
+                    }
+                } else {
+                    $('#productList').html("");
+                    $('#no-data-tip').show();
+                }
+            },
+            error: function() {
+                alert("异常！");
+            }
+        });
+    });
+
+
+    $('#product-list-page').on('click', '.js_end', function() {
+        var productName = $('#productName').val();
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, /*"productName": productName,*/ "pageNo": totalPage},
+            encryptType: 1});
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=inquirePageProductList', // 跳转到 action    
+            data: {
+                request: data
+            },
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    var oData = oData.data;
+                    var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                    totalPage = oData.totalPage;
+                    currentPage = totalPage;
+                    if (oData.count > 0) {
+                        $('#no-data-tip').hide();
+                        var html = template.render('productListTemplate', oData);
+                        $('#productList').html(html);
+                        var page = template.render('productPageTemplate', pagePara);
+                        $('#product-list-page').html(page);
+                    }
+                } else {
+                    $('#productList').html("");
+                    $('#no-data-tip').show();
+                }
+            },
+            error: function() {
+                alert("异常！");
+            }
+        });
+    });
+
+    $('#product-list-page').on('click', '.js_up', function() {
+        var productName = $('#productName').val();
+        currentPage = currentPage - 1;
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, /*"productName": productName,*/ "pageNo": currentPage},
+            encryptType: 1});
+        if (currentPage >= 1 && currentPage <= totalPage) {
+            $.ajax({
+                url: YDH.CONST.ServerPath + '?act=inquirePageProductList', // 跳转到 action    
+                data: {
+                    request: data
+                },
+                type: 'post',
+                cache: false,
+                dataType: 'json',
+                success: function(oData) {
+                    if (oData && oData.resultCode == 0) {
+                        var oData = oData.data;
+                        var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                        totalPage = oData.totalPage;
+
+                        if (oData.count > 0) {
+                            $('#no-data-tip').hide();
+                            var html = template.render('productListTemplate', oData);
+                            $('#productList').html(html);
+                            var page = template.render('productPageTemplate', pagePara);
+                            $('#product-list-page').html(page);
+                        }
+                    } else {
+                        $('#productList').html("");
+                        $('#no-data-tip').show();
+                    }
+                },
+                error: function() {
+                    alert("异常！");
+                }
+            });
+        }
+    });
+
+    $('#product-list-page').on('click', '.js_down', function() {
+        var productName = $('#productName').val();
+        currentPage = currentPage + 1;
+        if (currentPage >= 1 && currentPage <= totalPage) {
+            var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, /*"productName": productName,*/ "pageNo": currentPage},
+                encryptType: 1});
+            $.ajax({
+                url: YDH.CONST.ServerPath + '?act=inquirePageProductList', // 跳转到 action    
+                data: {
+                    request: data
+                },
+                type: 'post',
+                cache: false,
+                dataType: 'json',
+                success: function(oData) {
+                    if (oData && oData.resultCode == 0) {
+                        var oData = oData.data;
+                        var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                        totalPage = oData.totalPage;
+                        if (oData.count > 0) {
+                            $('#no-data-tip').hide();
+                            var html = template.render('productListTemplate', oData);
+                            $('#productList').html(html);
+                            var page = template.render('productPageTemplate', pagePara);
+                            $('#product-list-page').html(page);
+                        }
+                    } else {
+                        $('#productList').html("");
+                        $('#no-data-tip').show();
+                    }
+                },
+                error: function() {
+                    alert("异常！");
+                }
+            });
+        }
+    });
+</script>

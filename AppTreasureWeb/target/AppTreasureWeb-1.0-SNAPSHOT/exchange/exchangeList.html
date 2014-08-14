@@ -1,0 +1,290 @@
+<div id="wrap" class="content-main">
+    <form id="getExchangeList" class="form-box">
+        <div class="item mb20 clearfix">
+            <div class="item fl clearfix">
+                <div class="item-name fl">
+                    <label for="status">处理状态：</label>
+                </div>
+                <div class="item-ipt fl">
+                    <select name="status" id="status">
+                        <option value="1">已处理</option>
+                        <option value="2">未处理</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button-box fl ml170">
+                <button type="button" id="exchangeSearchBtn">查&nbsp;询</button>
+            </div>
+        </div>
+    </form>
+    <div id="table-box">
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="100px">用户id</th>
+                        <th>支付宝帐号</th>
+                        <th>支付宝姓名</th>
+                        <th width="120px">金额</th>
+                        <th width="120px">兑换时间</th>
+                        <th width="120px">操作选项</th>
+                    </tr>
+                </thead>
+                <tbody id="exchangeList">
+                </tbody>
+            </table>
+        </div>
+        <div id="exchange-list-page"></div>
+        <div id="no-data-tip"></div>
+    </div>
+</div>
+<script id="exchangePageTemplate" type="text/html">
+ <% if(totalPage >0){%>
+        <ul classs="table-page">
+            <li class="js_start"><a href="javascript:;">首页</a></li>
+            <li class="js_up"><a href="javascript:;">上页</a></li>
+             <li class="js_down"><a href="javascript:;">下页</a></li>
+             <li class="js_end"><a href="javascript:;">尾页</a></li>
+             <li><%=totalPage%>|<%=count %></li>
+         </ul>
+  <% }%>
+</script>
+<script id="exchangeTemplate" type="text/html">
+    <% if(drawMoneyList.length > 0){ %>
+    <% for(i=0;i < drawMoneyList.length;i++){ %>
+    <tr>
+    <td><%=drawMoneyList[i].userId%></td>
+    <td><%=drawMoneyList[i].payAccount%></td>
+    <td><%=drawMoneyList[i].userName%></td>
+    <td><%=drawMoneyList[i].drawAmount%></td>
+    <td><%=drawMoneyList[i].createTime%></td>
+    <% if(drawMoneyList[i].processStatus==2){%>
+    <td class="optlist" data-questionid=<%=drawMoneyList[i].drawAccountFlowId%>>
+    <button class="edit" data-tip="支付">支付</button>
+    </td>
+    <%} else { %>
+    <td >
+    已经支付
+    </td>
+    <%} %>
+    </tr>
+    <% }%>
+    <% } %>
+</script>
+<script>
+    var currentPage = 1;
+    var totalPage;
+    $('#exchangeSearchBtn').click(function() {
+        var status = $('#status').val();
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, "type": status, "pageNo": 1},
+            encryptType: 1})
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=inquirePageDrawFlowList', // 跳转到 action    
+            data: {
+                request: data
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    var oData = oData.data;
+                    totalPage = oData.totalPage;
+                    var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                    if (oData.count > 0) {
+                        $('#no-data-tip').hide();
+                        var html = template.render('exchangeTemplate', oData);
+                        $('#exchangeList').html(html);
+                        var page = template.render('exchangePageTemplate', pagePara);
+                        $('#exchange-list-page').html(page);
+                    }
+                } else {
+                    $('#exchangeList').html("");
+                    $('#no-data-tip').show();
+                }
+            },
+            error: function() {
+
+                alert("异常！");
+            }
+        });
+
+    });
+
+    $('#exchange-list-page').on('click', '.js_start', function() {
+        var status = $('#status').val();
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, "type": status, "pageNo": 1},
+            encryptType: 1})
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=inquirePageDrawFlowList', // 跳转到 action   
+            data: {
+                request: data
+            },
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    var oData = oData.data;
+                    var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                    totalPage = oData.totalPage;
+                    currentPage = 1;
+
+                    if (oData.count > 0) {
+                        $('#no-data-tip').hide();
+                        var html = template.render('exchangeTemplate', oData);
+                        $('#exchangeList').html(html);
+                        var page = template.render('exchangePageTemplate', pagePara);
+                        $('#exchange-list-page').html(page);
+                    }
+                } else {
+                    $('#exchangeList').html("");
+                    $('#no-data-tip').show();
+                }
+            },
+            error: function() {
+                alert("异常！");
+            }
+        });
+    });
+
+
+    $('#exchange-list-page').on('click', '.js_end', function() {
+        var status = $('#status').val();
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, "type": status, "pageNo": totalPage},
+            encryptType: 1});
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=inquirePageDrawFlowList', // 跳转到 action    
+            data: {
+                request: data
+            },
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    var oData = oData.data;
+                    var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                    totalPage = oData.totalPage;
+                    currentPage = totalPage;
+                    if (oData.count > 0) {
+                        $('#no-data-tip').hide();
+                        var html = template.render('exchangeTemplate', oData);
+                        $('#exchangeList').html(html);
+                        var page = template.render('exchangePageTemplate', pagePara);
+                        $('#exchange-list-page').html(page);
+                    }
+                } else {
+                    $('#exchangeList').html("");
+                    $('#no-data-tip').show();
+                }
+            },
+            error: function() {
+                alert("异常！");
+            }
+        });
+    });
+
+    $('#exchange-list-page').on('click', '.js_up', function() {
+        var status = $('#status').val();
+        currentPage = currentPage - 1;
+        if (currentPage >= 1 && currentPage <= totalPage) {
+            var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, "type": status, "pageNo": currentPage},
+                encryptType: 1});
+            $.ajax({
+                url: YDH.CONST.ServerPath + '?act=inquirePageDrawFlowList', // 跳转到 action    
+                data: {
+                    request: data
+                },
+                type: 'post',
+                cache: false,
+                dataType: 'json',
+                success: function(oData) {
+                    if (oData && oData.resultCode == 0) {
+                        var oData = oData.data;
+                        var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                        totalPage = oData.totalPage;
+
+                        if (oData.count > 0) {
+                            $('#no-data-tip').hide();
+                            var html = template.render('exchangeTemplate', oData);
+                            $('#exchangeList').html(html);
+                            var page = template.render('exchangePageTemplate', pagePara);
+                            $('#exchange-list-page').html(page);
+                        }
+                    } else {
+                        $('#exchangeList').html("");
+                        $('#no-data-tip').show();
+                    }
+                },
+                error: function() {
+                    alert("异常！");
+                }
+            });
+        }
+
+    });
+
+    $('#exchange-list-page').on('click', '.js_down', function() {
+        var status = $('#status').val();
+        currentPage = currentPage + 1;
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"pageCount": 10, /*"productName": productName,*/ "pageNo": currentPage},
+            encryptType: 1});
+        if (currentPage >= 1 && currentPage <= totalPage) {
+            $.ajax({
+                url: YDH.CONST.ServerPath + '?act=inquirePageDrawFlowList', // 跳转到 action    
+                data: {
+                    request: data
+                },
+                type: 'post',
+                cache: false,
+                dataType: 'json',
+                success: function(oData) {
+                    if (oData && oData.resultCode == 0) {
+                        var oData = oData.data;
+                        var pagePara = {"totalPage": oData.totalPage, "count": oData.count};
+                        totalPage = oData.totalPage;
+                        if (oData.count > 0) {
+                            $('#no-data-tip').hide();
+                            var html = template.render('exchangeListTemplate', oData);
+                            $('#exchangeList').html(html);
+                            var page = template.render('exchangePageTemplate', pagePara);
+                            $('#exchange-list-page').html(page);
+                        }
+                    } else {
+                        $('#exchangeList').html("");
+                        $('#no-data-tip').show();
+                    }
+                },
+                error: function() {
+                    alert("异常！");
+                }
+            });
+        }
+    });
+
+    $('#exchangeList').on('click', '.optlist > .edit ', function() {
+        var drawAccountFlowId = $(this).parent().attr('data-questionid');
+        var data = JSON.stringify({session: YDH.Cookie.get("DYBSession"), data: {"drawAccountFlowId": drawAccountFlowId},
+            encryptType: 1});
+        $.ajax({
+            url: YDH.CONST.ServerPath + '?act=processDrawFlow', // 跳转到 action    
+            data: {
+                request: data
+            },
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            success: function(oData) {
+                if (oData && oData.resultCode == 0) {
+                    alert('支付成功');
+                } else {
+                    alert('支付失败');
+                }
+            },
+            error: function() {
+                alert("异常！");
+            }
+        });
+
+    });
+</script>

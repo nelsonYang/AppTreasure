@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+            body,html { margin: 0; padding: 0; background: #fff; font-family: "Microsoft Yahei"; }
+            body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}
+            table{border-collapse:collapse;border-spacing:0}
+            fieldset,img{border:0}
+            address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}
+            ol,ul{list-style:none}
+            caption,th{text-align:left}
+            h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}
+            q:before,q:after{content:''}
+            abbr,acronym{border:0;font-variant:normal}
+            sup{vertical-align:text-top}
+            sub{vertical-align:text-bottom}
+            input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}
+            input,textarea,select{*font-size:100%}
+            legend{color:#000}#yui3-css-stamp.cssreset{display:none}
+            ul{list-style: none;}
+            ul li{ float: left; margin-left: 50px;}
+            .user-info{float:right; margin-right:50px;}
+            #main{clear: right}
+            #content{clear:left}
+            #footer { padding-top: 30px; text-align: center; color: #888; }
+            .form-box{}
+            .fl{float:left;}
+            .clearfix{clear: both; }
+            .table-box{clear:both}
+            .content-main{ width: 1200px; margin-left: auto; margin-right: auto; margin-top: 20px;  }
+            #menu { height: 42px; width: 100%; background: #454545; line-height: 42px; color: #fff;  }
+            #menu ul { width: 1200px; margin-left: auto; margin-right: auto; }
+            #menu li { padding-left: 15px; padding-right: 15px; margin: 0; }
+            #menu .current-nav { background: #3297fd; }
+            /* 表格 */
+            .table-box { margin-bottom: 15px; }
+            .table-box table { width: 100%; text-align: center; table-layout: fixed; }
+            .table-box th { height: 34px; border-bottom: 1px solid #c5c5c5; background: #eee; font-size: 14px; color: #454545; text-align: center;  }
+            .table-box .star-box { margin-left: 27px; }
+            .table-box td { height: 28px; padding: 10px; border-bottom: 1px dashed #ccc; line-height: 1.6; }
+            .table-box tr:hover { background: #f2f2f2; }
+            .table-box tr.current { background: #fdf2bd; }
+            .table-box .ellipsis {
+                            white-space: nowrap;
+                            overflow: hidden;
+                            -o-text-overflow:ellipsis;
+                            -icab-text-overflow: ellipsis;
+                            -khtml-text-overflow: ellipsis;
+                            -moz-text-overflow: ellipsis;
+                            -webkit-text-overflow: ellipsis;
+                            text-overflow:ellipsis;
+                            }
+            .table-box .left { text-align: left; }
+            .table-box em { color: #de1616; }
+            .table-box span { color: #0579c6;; }
+            .table-box p { text-align: left; }
+            .table-box .content { color: #101010; line-height: 1.4; word-break: break-word; margin-bottom: 5px; }
+            .table-box .time { margin-top: 5px; color: #888; }
+            .table-box .money { font-size: 18px; line-height: 1; }
+            .table-box .title { font-size: 14px; line-height: 1; }
+            .table-box p b { color: #333; }
+            .table-box .images a { display: inline-block; padding: 0; margin-right: 3px; *margin-right: 6px; width: auto; height: 50px; }
+            .table-box .images img { display: block; width: auto; height: 50px; }
+            .table-box a { padding: 5px 5px; color: #333; font-size: 13px; border-radius: 2px; font-family: "宋体" }
+            .table-box a:link,
+            .table-box a:visited { color: #333; }
+            .table-box a:hover { color: #fff; background: #e74649; text-decoration: none; }
+            .table-box a:active { background: #bb1d1f; }
+            .table-box .success { color: #2abe7d; }
+            .table-box .fail { color: #de1616; }
+            .table-box a.more { padding-right: 10px; background: url(images/arrow.png) no-repeat right; color: #0579c6; }
+            .table-box a.more:hover { color: #fff; background: #e74649; }
+            .table-box .more-menu {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 99;
+                    background: #fff;
+                    border: 1px solid #ccc;
+                    -webkit-border-radius: 2px;
+                    -moz-border-radius: 2px;
+                    border-radius: 2px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+                    }
+            .table-box .more-menu a { display: block; padding: 3px 8px; color: #0579c6; }
+            .table-box .more-menu a:hover { color: #fff; }
+            /* 分页 */
+            .table-page { height: 30px; margin-top: 30px; line-height: 30px; }
+            .table-page li { float: left; margin-right: 6px; text-align: center; }
+            .table-page .ellipsis { padding-left: 5px; padding-right: 5px; font-family: "Microsoft Yahei"; }
+            .table-page a {
+                display: block;
+                padding-left: 12px;
+                padding-right: 12px;
+                background: #eee;
+                color: #333;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                -o-border-radius: 3px;
+                -ms-border-radius: 3px;
+                border-radius: 3px;
+                    }
+            .table-page .table-page-disabled,
+            .table-page .table-page-disabled:hover { color: #c5c5c5; background: #ddd; cursor: default; }
+            .table-page .current-page { background: #e74649; color: #fff; }
+            .table-page a:hover { background: #e74649; color: #fff; text-decoration: none; }
+            .table-page a:active {
+                background: #e74649;
+                -webkit-box-shadow: inset 0 1px 2px 0 rgba(0,0,0,.25);
+                -moz-box-shadow: inset 0 1px 2px 0 rgba(0,0,0,.25);
+                -o-box-shadow: inset 0 1px 2px 0 rgba(0,0,0,.25);
+                -ms-box-shadow: inset 0 1px 2px 0 rgba(0,0,0,.25);
+                box-shadow: inset 0 1px 2px 0 rgba(0,0,0,.25);
+                    }
+            
+        </style>
+    </head>
+    <body>
+        <div id="header">
+            <div class="user-info" id="js-user-info">
+                <p>你好，<strong id="user-name">尊敬的用户</strong></p>
+                <p><a id="js-safe-quit" href="javascript:;">安全退出</a></p>
+            </div>
+        </div>
+        <div id="main">
+            <div id="menu">
+                <ul>
+                    <li id="product">商品</li>
+                    <li id="exchange">兑换记录</li>
+                </ul>
+            </div>
+            <div id="content">
+            </div>
+       <!-- <div id="footer">
+                <p>使用点有宝，天天都受益</p>
+                <p>Copyright @ 2014 dyb Inc. All rights reserved.</p>
+            </div>-->
+        </div>
+        <script src="js/jquery-1.8.3.min.js" charset="utf-8"></script>
+        <script src="js/yui-min.js" charset="utf-8"></script>
+        <script src="js/global.js"></script>
+        <script src="js/template.js"></script>
+        <script>
+            $('#exchange').click(function() {
+                $(this).addClass("current-nav").siblings().removeClass("current-nav");
+                $('#content').load("exchange/exchangeList.html");
+            });
+            $('#product').click(function() {
+                $(this).addClass("current-nav").siblings().removeClass("current-nav");
+                $('#content').load("product/productList.html");
+            });
+            $('#js-safe-quit').click(function(){
+                window.location="index.html";
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="description" content="点有宝是一个软件广告平台"/>
+        <style type="text/css">
+            div#main{width:500px;height:300px;position:absolute; top: 50%;left:50%; margin-left:-250px; margin-top:-200px}
+            div#login-box{padding-left: 100px}
+            .login-item{height:50px; margin-top:3px;}
+            .login-item input{height:30px;}
+            .login-btn{
+                height:50px;
+                padding-left: 50px;
+            }
+            #login-sub{
+                height:30px;
+                background:url(image/button.png);
+                width: 150px;
+            }
+            #footer { padding-top: 30px; text-align: center; color: #888; }
+        </style>
+    </head>
+    <body>
+        <div id="header"></div>
+        <div id="main">
+            <div id="login-box">
+                <div id="logo">
+                    <h1>&nbsp;&nbsp;&nbsp;&nbsp;xxxx</h1>
+                </div>
+                <form name="login-form" name="loginForm">
+                    <div class="login-item">
+                        <label for="useName"></label>
+                        <input type="text" name="userName" id="userName" placeholder="登录帐号" autocomplete="off" maxlength="32">
+                    </div>
+                    <div class="login-item">
+                        <label for="password"></label>
+                        <input type="password" name="password" id="password" placeholder="密码" autocomplete="off" maxlength="16">
+                    </div>
+                    <div class="login-btn">
+                        <button type="button" id="login-sub">登录</button>
+                    </div>
+                </form>
+            </div>
+            <!--<div id="footer">
+                <p>使用点有宝，天天都受益</p>
+                <p>Copyright @ 2014 dyb Inc. All rights reserved.</p>
+            </div>-->
+        </div>
+        <script src="js/jquery-1.8.3.min.js" charset="utf-8"></script>
+        <script src="js/yui-min.js" charset="utf-8"></script>
+        <script src="js/global.js"></script>
+        <script src="js/template.js"></script>
+         <script src="js/md5.js"></script>
+        <script>
+            $('#login-sub').click(function() {
+                var userName = $('#userName').val();
+                var password = $('#password').val();
+                var data = JSON.stringify({data:{userName:userName,password:password}, encryptType: 2});
+                var sign=hex_md5(data);
+                $.ajax({
+                    url: YDH.CONST.ServerPath + '?act=managerLogin&sign='+sign,
+                    data: {
+                        request:data
+                    },
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(oData) {
+                        console.log(oData);
+                        if (oData && oData.resultCode == 0) {
+                            var oData = oData.data;
+                            YDH.Cookie.set("DYBaesKey", oData.key, YDH.CONFIG.Cookie[0]);
+                            YDH.Cookie.set("DYBSession", oData.session, YDH.CONFIG.Cookie[0]);
+                            YDH.CONST.Session=oData.session;
+                            window.location="main.html"
+                        } else {
+                            alert("登录失败");
+                        }
+                    },
+                    error: function() {
+                        alert("异常！");
+                    }
+                });
+
+            });
+        </script>
+    </body>
+</html>
